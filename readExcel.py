@@ -21,10 +21,10 @@ import time as t
 # INPUTS
 # 
 # Select the file to be analyzed ################################################################# (1)
-filePath = "C:/Users/Public/Documents/Dewesoft/Exports/rpm_scan_1_2.xlsx"    # win path '/'
+filePath = "C:/Users/Public/Documents/Dewesoft/Exports/rpm_scan_2_6.xlsx"    # win path '/'
 # Select the focused frequency range for fft inspection ########################################## (2)
 x_start = 0                                                 # in Hz
-x_stop = 200                                                # in Hz
+x_stop = 400                                                # in Hz
 
 # PROGRAM
 #
@@ -213,7 +213,6 @@ favfZ.set_xlim([x_start, x_stop])
 end = t.time()
 print('Time taken for plotting the FFT data: ', end - start)
 totalTime += end-start
-start = t.time()
 print('Total Run Time: ', totalTime)
 
 # Show the plot
