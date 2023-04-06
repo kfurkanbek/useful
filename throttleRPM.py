@@ -3,7 +3,7 @@
 # 04 April 2023
 # 
 # Created for inspecting the throttle with RPM data
-# which requires one inputs
+# which requires two inputs
 # (1) path of the txt file for throttle
 # (2) paths of the txt file for RPMs from ESC
 # important note: RPM = eRPM / 26
@@ -277,7 +277,6 @@ ax441.grid()
 
 # ================================================================================================================
 
-# print(57.30*(esc0['eRPM']/3000.00)^2)
 esc0['Thrust [N]'] = (esc0['eRPM']*esc0['eRPM'])*(57.30/(3000.00*3000.00))
 esc1['Thrust [N]'] = (esc1['eRPM']*esc1['eRPM'])*(57.30/(3000.00*3000.00))
 esc2['Thrust [N]'] = (esc2['eRPM']*esc2['eRPM'])*(57.30/(3000.00*3000.00))
@@ -330,30 +329,30 @@ fftEsc_R = abs(fft(rightDiff))[0:NX//2]
 
 fig6 = plt.figure()
 ax611 = fig6.add_subplot(221)
-lines611 = ax611.plot(fftHz_X, fftEsc_LR, label="LR fft [amplitude]")
+lines611 = ax611.plot(fftHz_X, fftEsc_LR, "xkcd:orange", label="LR fft [amplitude]")
 ax611.set_xlabel("Hz")
-ax611.set_title("LR Diff fft [amplitude]")
+ax611.set_title("fft Left-Right Thrust Diff: Thrust 1+2 vs Thrust 0+3 [amplitude]")
 ax611.legend()
 ax611.grid()
 
 ax621 = fig6.add_subplot(222)
-lines621 = ax621.plot(fftHz_X, fftEsc_FB, label="FB fft [amplitude]")
+lines621 = ax621.plot(fftHz_X, fftEsc_FB, "xkcd:orange", label="FB fft [amplitude]")
 ax621.set_xlabel("Hz")
-ax621.set_title("FB Diff fft [amplitude]")
+ax621.set_title("fft Front-Back Thrust: Thrust 0+2 vs Thrust 1+3 [amplitude]")
 ax621.legend()
 ax621.grid()
 
 ax631 = fig6.add_subplot(223)
-lines631 = ax631.plot(fftHz_X, fftEsc_L, label="L fft [amplitude]")
+lines631 = ax631.plot(fftHz_X, fftEsc_L, "xkcd:orange", label="L fft [amplitude]")
 ax631.set_xlabel("Hz")
-ax631.set_title("L Diff fft [amplitude]")
+ax631.set_title("fft Left Thrust Diff: Thrust 2 vs Thrust 1 [amplitude]")
 ax631.legend()
 ax631.grid()
 
 ax641 = fig6.add_subplot(224)
-lines641 = ax641.plot(fftHz_X, fftEsc_R, label="R fft [amplitude]")
+lines641 = ax641.plot(fftHz_X, fftEsc_R, "xkcd:orange", label="R fft [amplitude]")
 ax641.set_xlabel("Hz")
-ax641.set_title("R Diff fft [amplitude]")
+ax641.set_title("fft Right Thrust Diff: Thrust 0 vs Thrust 3 [amplitude]")
 ax641.legend()
 ax641.grid()
 
