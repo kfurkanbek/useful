@@ -21,13 +21,13 @@ import time as t
 # INPUTS
 # 
 # Select the file to be analyzed ################################################################# (1)
-filePath = "C:/Users/Public/Documents/Dewesoft/Exports/rpm_scan_2_6.xlsx"    # win path '/'
+filePath = "E:/BODY_VIBRATION_TEST/data/rpm_scan_2_6.xlsx"    # win path '/'
 # Select the focused frequency range for fft inspection ########################################## (2)
 x_start = 0                                                 # in Hz
 x_stop = 400                                                # in Hz
 
 # PROGRAM
-#
+#z
 totalTime = 0
 start = t.time()
 
@@ -214,6 +214,33 @@ end = t.time()
 print('Time taken for plotting the FFT data: ', end - start)
 totalTime += end-start
 print('Total Run Time: ', totalTime)
+
+fig3 = plt.figure()
+fX = fig3.add_subplot(311)
+linesfX1 = fX.plot(fftHz, fftAcc1, "xkcd:orange", label="UAV", linewidth=lineWidth * 2)
+linesfX2 = fX.plot(fftHz, fftAcc1avf, "xkcd:blue", label="AV FR", linewidth=lineWidth)
+fX.set_ylabel("amplitude")
+fX.set_title("fft X Direction")
+fX.set_xlim([x_start, x_stop])
+fX.legend()
+fX.grid()
+
+fY = fig3.add_subplot(312)
+linesfY1 = fY.plot(fftHz, fftAcc2, "xkcd:orange", label="UAV", linewidth=lineWidth * 2)
+linesfY2 = fY.plot(fftHz, fftAcc2avf, "xkcd:blue", label="AV FR", linewidth=lineWidth)
+fY.set_title("fft Y Direction")
+fY.set_xlim([x_start, x_stop])
+fY.legend()
+fY.grid()
+
+fZ = fig3.add_subplot(313)
+linesfZ1 = fZ.plot(fftHz, fftAcc3, "xkcd:orange", label="UAV", linewidth=lineWidth * 2)
+linesfZ2 = fZ.plot(fftHz, fftAcc3avf, "xkcd:blue", label="AV FR", linewidth=lineWidth)
+fZ.set_xlabel("Hz")
+fZ.set_title("fft Z Direction")
+fZ.set_xlim([x_start, x_stop])
+fZ.legend()
+fZ.grid()
 
 # Show the plot
 plt.show()
