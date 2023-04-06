@@ -19,10 +19,10 @@ from scipy.fft import fft, fftfreq
 # Select the file to be analyzed ################################################################# (1)
 throttlePath = 'E:/THROTTLE_RPM/throttle_export.txt'    # win path '/'
 # Select the file to be analyzed ################################################################# (1)
-escPath0 = 'E:/THROTTLE_RPM/esc0.csv'    # win path '/'
-escPath1 = 'E:/THROTTLE_RPM/esc1.csv'    # win path '/'
-escPath2 = 'E:/THROTTLE_RPM/esc2.csv'    # win path '/'
-escPath3 = 'E:/THROTTLE_RPM/esc3.csv'    # win path '/'
+escPath0 = 'E:/THROTTLE_RPM/data/esc0.csv'    # win path '/'
+escPath1 = 'E:/THROTTLE_RPM/data/esc1.csv'    # win path '/'
+escPath2 = 'E:/THROTTLE_RPM/data/esc2.csv'    # win path '/'
+escPath3 = 'E:/THROTTLE_RPM/data/esc3.csv'    # win path '/'
 
 # PROGRAM
 #
@@ -274,5 +274,87 @@ ax441.set_xlabel("Hz")
 ax441.set_title("fft: ESC3 RPM and Throttle")
 ax441.legend()
 ax441.grid()
+
+# ================================================================================================================
+
+# print(57.30*(esc0['eRPM']/3000.00)^2)
+esc0['Thrust [N]'] = (esc0['eRPM']*esc0['eRPM'])*(57.30/(3000.00*3000.00))
+esc1['Thrust [N]'] = (esc1['eRPM']*esc1['eRPM'])*(57.30/(3000.00*3000.00))
+esc2['Thrust [N]'] = (esc2['eRPM']*esc2['eRPM'])*(57.30/(3000.00*3000.00))
+esc3['Thrust [N]'] = (esc3['eRPM']*esc3['eRPM'])*(57.30/(3000.00*3000.00))
+
+fig5 = plt.figure()
+ax511 = fig5.add_subplot(221)
+lines511 = ax511.plot((esc1['Thrust [N]']+esc2['Thrust [N]']) - (esc0['Thrust [N]']+esc3['Thrust [N]']), label="Thrust1+2 - 0+3 [N]")
+ax511.set_xlabel("Time [s]")
+ax511.set_title("Left-Right Thrust Diff: Thrust 1+2 vs Thrust 0+3")
+ax511.legend()
+ax511.grid()
+
+ax521 = fig5.add_subplot(222)
+lines511 = ax521.plot((esc0['Thrust [N]']+esc2['Thrust [N]']) - (esc1['Thrust [N]']+esc3['Thrust [N]']), label="Thrust0+2 - 1+3 [N]")
+ax521.set_xlabel("Time [s]")
+ax521.set_title("Front-Back Thrust: Thrust 0+2 vs Thrust 1+3")
+ax521.legend()
+ax521.grid()
+
+ax531 = fig5.add_subplot(223)
+lines511 = ax531.plot((esc2['Thrust [N]'] - esc1['Thrust [N]']), label="Thrust2 - 1 [N]")
+ax531.set_xlabel("Time [s]")
+ax531.set_title("Left Thrust Diff: Thrust 2 vs Thrust 1")
+ax531.legend()
+ax531.grid()
+
+ax541 = fig5.add_subplot(224)
+lines511 = ax541.plot((esc0['Thrust [N]'] - esc3['Thrust [N]']), label="Thrust0 - 3 [N]")
+ax541.set_xlabel("Time [s]")
+ax541.set_title("Right Thrust Diff: Thrust 0 vs Thrust 3")
+ax541.legend()
+ax541.grid()
+
+minLen = min(len(esc0['Thrust [N]']), len(esc1['Thrust [N]']), len(esc2['Thrust [N]']), len(esc3['Thrust [N]']))
+leftRightDiff = (esc1['Thrust [N]'].values[0:minLen]+esc2['Thrust [N]'].values[0:minLen]) - (esc0['Thrust [N]'].values[0:minLen]+esc3['Thrust [N]'].values[0:minLen])
+frontBackDiff = (esc0['Thrust [N]'].values[0:minLen]+esc2['Thrust [N]'].values[0:minLen]) - (esc1['Thrust [N]'].values[0:minLen]+esc3['Thrust [N]'].values[0:minLen])
+leftDiff = (esc2['Thrust [N]'].values[0:minLen] - esc1['Thrust [N]'].values[0:minLen])
+rightDiff = (esc0['Thrust [N]'].values[0:minLen] - esc3['Thrust [N]'].values[0:minLen])
+
+NX = minLen
+TX = totalSeconds / NX
+
+fftHz_X = fftfreq(NX, TX)[0:NX//2]
+
+fftEsc_LR = abs(fft(leftRightDiff))[0:NX//2]
+fftEsc_FB = abs(fft(frontBackDiff))[0:NX//2]
+fftEsc_L = abs(fft(leftDiff))[0:NX//2]
+fftEsc_R = abs(fft(rightDiff))[0:NX//2]
+
+fig6 = plt.figure()
+ax611 = fig6.add_subplot(221)
+lines611 = ax611.plot(fftHz_X, fftEsc_LR, label="LR fft [amplitude]")
+ax611.set_xlabel("Hz")
+ax611.set_title("LR Diff fft [amplitude]")
+ax611.legend()
+ax611.grid()
+
+ax621 = fig6.add_subplot(222)
+lines621 = ax621.plot(fftHz_X, fftEsc_FB, label="FB fft [amplitude]")
+ax621.set_xlabel("Hz")
+ax621.set_title("FB Diff fft [amplitude]")
+ax621.legend()
+ax621.grid()
+
+ax631 = fig6.add_subplot(223)
+lines631 = ax631.plot(fftHz_X, fftEsc_L, label="L fft [amplitude]")
+ax631.set_xlabel("Hz")
+ax631.set_title("L Diff fft [amplitude]")
+ax631.legend()
+ax631.grid()
+
+ax641 = fig6.add_subplot(224)
+lines641 = ax641.plot(fftHz_X, fftEsc_R, label="R fft [amplitude]")
+ax641.set_xlabel("Hz")
+ax641.set_title("R Diff fft [amplitude]")
+ax641.legend()
+ax641.grid()
 
 plt.show()
