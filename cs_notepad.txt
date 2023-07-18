@@ -1,0 +1,1302 @@
+C# vs .NET
+- C# is a programming language
+- .NET is a framework for building applications on Windows
+
+.NET
+- CLR (Common Language Runtime)
+- Class Library
+
+CLR
+IL Code: intermediate language code
+JIT Compilation: Just In Time Compilation
+
+C/C++ -> Native Code
+C# -> ILC -> Native Code
+
+Architecture of .NET Applications
+Application <- Class
+Class <- Data (Attribute) / Methods (Functions)
+
+Car <- Make / Model / Color // Start() / Move()
+
+Namespace <- Class
+
+Assembly (DLL or EXE) <- Namespace <- Class
+DLL: Dynamically Linked Library
+
+Application <- Assembly <- Namespace <- Class
+
+#
+
+Variables / Constants
+- Variable: a name given to a storage location in memory
+- Constant: an immutable value
+
+- CamelCase:            firstName	 -> +
+- PascalCase:           FirstName	 -> -
+- Hungarian Notation:   strFirstName -> x
+
+Primitive types
+- Integral Numbers
+-- C# type      .NET Type       Bytes       Range
+-- byte         Byte            1           0       -> 255
+-- short        Int16           2           -32,768 -> 32,767
+-- int          Int32           4           -2.1B   -> 2.1B
+
+- Real Numbers
+-- long         Int64           8           ...
+-- float        Single          4           -3.4e38 -> 3.4e38
+-- double       double          8           ...
+-- decimal      Decimal         16          -7.9e28 -> 7.9e28
+
+- Character
+-- char         Char            2           Unicode Characters
+
+- Boolean
+-- bool         Boolean         1           True / False
+
+
+double <- default real number
+otherwise define explicitly:
+float number = 1.2f;
+decimal number = 1.2m;
+
+Non-Primitive types
+- String
+- Array
+- Enum
+- Class
+
+CTLR + ALT + J      -> Object Browser
+
+#
+
+Overflowing
+
+checked
+{
+    byte number = 255;
+    number = number + 1; // 0
+} -> throw an expection to get handled
+
+Scope
+{
+    byte a = 1; // only a is accessible
+    {
+        byte b = 2; // a b
+        {
+            byte c=3; // a b c are all accessible
+        }
+    }
+}
+
+#
+
+Agenda
+- Implicit type conversion
+- Explicit type conversion (casting)
+- Conversion between non-compatible types
+
+Implicit type conversion
+byte b = 1;                                00000001
+int i = b;      00000000 00000000 00000000 00000001
+
+int i = 300;    00000000 00000000 00000000 00000001
+byte b = 1;     // will not compile!
+
+Explicit type conversion
+int i = 1;
+byte b = (byte) i;
+
+float f = 1.0f;
+int i = (int)f;
+
+Non-compatible types
+string s = "1";
+int i = (int)s; // will not compile!
+
+int i = Convert.ToInt32(s);
+int j = int.Parse(s);
+
+Convert class
+- ToByte()      byte
+- ToInt16()     short
+- ToInt32()     int
+- ToInt64()     long
+
+#
+
+C# Operators
+- Arithmetic Operators
+- Comparison Operators
+- Assignment Operators
+- Logical Operators
+- Bitwise Operators
+
+#
+
+Comments
+
+// Single-line Comment
+
+/* Multi-line
+   Comments
+*/
+
+When to Use: To explain whys, hows, constrains, etc.
+             not the whats...
+
+#
+
+Debugging in Visual Studio
+
+-> break points
+-> run in debug mode
+-> inspect the values
+
+CTRL + SHIFT + B ---> building
+F5               ---> run in debug
+CTRL + F5        ---> run without debug
+F9               ---> add breakpoint
+F10              ---> Step over / one line at a time
+F11              ---> Step into / example the method
+SHIFT + F11      ---> Step out of a method
+
+Debug -> Windows -> Watch -> Watch 1
+
+#
+
+Defensive programming
+
+#
+
+Call Stack
+
+Debug -> Windows -> Call Stack
+
+#
+
+Locals Autos
+
+Debug -> Windows -> Autos
+Debug -> Windows -> Locals
+
+#
+
+Classes
+
+Agenda
+- What is a class
+- Real-world example of classes
+- What is an object
+- Static members
+
+Application <- Class
+
+Real World Example
+Presentation                <- PostView
+Business Logic / Domain     <- Post
+Data Access / Persistance   <- PostRepository
+
+Anatomy of a Class
+- Data (represented by fields)
+- Behaviour (represented by methods / functions)
+
+Object
+- An instance of a class
+
+Declaring Classes
+public class Person
+{
+    // fields
+    public string Name;
+
+    // methods
+    public void Introduce()
+    {
+        Console.WriteLine("Hi, my name is " + Name):
+    }
+}
+
+Creating Objects
+// var person = new Person();
+Person person = new Person();
+camel Notation // Pascal Notation
+
+person.Name = "Furk";
+person.Introduce();
+
+Class Members
+- Instance: accessible from an object
+var person = new Person();
+person.Introduce();
+
+- Static: accessible from the class
+Console.WriteLine();
+
+Why use static members?
+- To represent concepts that are singleton.
+- DateTime.Now
+- Console.WriteLine()
+
+public class Person
+{
+    public string Name;
+    public void Introduce(string to)
+    {
+        Console.WriteLine("Hi, {0} I am {1}", to, Name);
+    }
+
+    public static Person Parse(string str)
+    {
+        var person = new Person();
+        person.Name = str;
+
+        return person;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var person = new Person();
+        person.Name = "Furk";
+        person.Introduce("Kema");
+
+        var p = Person.Parse("Furk");
+        p.Introduce("Kema");
+    }
+}
+
+- Static members are only accessible via class
+- One does not have to create an instance of it
+
+#
+
+Constructors (ctor)
+
+What?
+- A method that is called when an instance of a class is created.
+Why?
+- To put an object in an early state.
+How?
+public class Customer
+{
+    public string Name;
+    public List<Order> Orders;
+
+    // parameterless or default constructor
+    public Customer()
+    {
+        // any number   zero
+        // any bool     false
+        // any char     empty
+        // any ref      null
+
+        Orders = new List<Order>();
+    }
+
+    public Customer(string name)
+        : this()
+    {
+        // to distinguish the field of the class
+        this.Name = name;
+    }
+
+    // Constructor Overloading
+    public Customer(int id, string name) {}
+}
+
+var customer = new Customer("Furk");
+
+- initializes an object upon creation
+- for ex. List<T>
+- must have exact same name
+- has no return type, not even void
+
+- initialize ref based fields
+- to avoid null exception
+
+- Not a Good practice!
+- use : this() to call previous constructor
+- one can also use : this(name)
+- to call the constructor with name argument first
+
+- Only use constructor when it is really necessary!
+
+1- default / parameterless constructor
+2- overloading a constructors with different signatures
+3- using this() keyword to pass the execution to another constructor
+
+#
+
+Object Initializers
+
+What?
+- A syntax for quickly initializing an object
+- without the need to call one of its constructors
+Why?
+- To avoid creating multiple constructors
+How?
+public class Person
+{
+    public int Id;
+
+    public string Name;
+}
+
+- so many ctor combinations
+- simply initialize when creating an instance
+- this is not calling any constructors
+
+var person = new Person
+                {
+                    FirstName = "Furk";
+                    LastName  = "Kema";
+                };
+
+#
+
+Fields
+
+Agenda
+- Initialization
+- Read-only fields
+
+Initialization
+public class Customer
+{
+    List<Order> Orders;
+
+    public Customer()
+    {
+        Orders = new List<Order>();
+    }
+}
+
+- school of thought:
+- use constructors, only when we need to initialize
+- based on the values from the outside / external values
+
+public class Customer
+{
+    List<Order> Orders = new List<Order>();
+}
+
+Read-only Fields
+public class Customer
+{
+    // directly
+    readonly List<Order> Orders = new List<Order>();
+
+    // or via constructor
+    public Customer()
+    {
+        Orders = new List<Order>();
+    }
+}
+
+- read-only makes sure that the field will be assigned only once
+
+public class Customer
+{
+    public int Id;
+    public string Name;
+
+    // since Orders has no external dependence
+    public readonly List<Order> Orders = new List<Order>();
+
+    public Customer(int id)
+    {
+        this.Id = id;
+    }
+
+    public Customer(int id, string name)
+        : this(id)
+    {
+        this.Name = name;
+    }
+
+    public void Promote()
+    {
+        // Wrong to do that!
+        // One can not initialize field again
+        // This will give compile error
+        Orders = new List<Order>();
+        // Therefore one must use the readonly type
+
+        // some other process...
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var customer = new Customer(1);
+        customer.Orders.Add(new Order());
+        customer.Orders.Add(new Order());
+
+        customer.Promote();
+
+        Console.WriteLine(customer.Orders.Count);
+    }
+}
+
+- readonly increases the robustness of the application
+
+#
+
+Methods
+
+Agenda
+- Signature of Methods
+- Method Overloading
+
+- Params modifier   <- useful
+- Ref modifier      <- not so good
+- Out modifier      <- not so good
+
+Signature of a Method
+- Name
+- Number and Type of parameterless
+
+public class Point
+{
+    public void Move(int x, int y) {}
+}
+
+Overloading Methods
+- Having a method with the same name but different signatures
+
+public class Point
+{
+    public void Move(int x, int y) {}
+
+    public void Move(Point newLocation) {}
+
+    public void Move(Point newLocation, int speed) {}
+}
+
+- use overloading if it makes easy for the consumers of the class
+
+- A method with varying number of parameters
+
+public class Calculator
+{
+    public int Add(int n1, int n2) {}
+
+    public int Add(int n1, int n2, int n3) {}
+
+    public int Add(int n1, int n2, int n3, int n4) {}
+
+    // ... not an efficient way to overload the add method
+
+    public int[] Add(int[] numbers)
+}
+
+var result = calculator.Add(new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9});
+
+- The Params modifier
+
+public class Calculator
+{
+    public int Add(params int[] numbers) {}
+}
+
+var result = calculator.Add(new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9});
+var result = calculator.Add(1, 2, 3, 4);
+
+- The Ref modifier
+
+public class MyClass
+{
+    // local copy of the "a"
+    public void MyMethod(int a)
+    {
+        a += 2;
+    }
+}
+
+var a = 1;
+myClass.MyMethod(a);
+// original a will not be 3 in this scope
+
+public class Weirdo
+{
+    public void DoAWeirdThing(ref int a)
+    {
+        a += 2;
+    }
+}
+
+var a = 1;
+weirdo.DoAWeirdThing(ref a);
+// now the original a will be modified
+
+- The Out Modifier
+
+public class MyClass
+{
+    public void MyMethod(out int result)
+    {
+        result = 1;
+    }
+}
+
+int a;
+myClass.MyMethod(out a);
+
+public void Move(int x, int y)
+{
+    this.X = x;
+    this.Y = y;
+}
+
+public void Move(Point newLocation)
+{
+    // this.X = newLocation.x;
+    // this.Y = newLocation.y;
+
+    // implement defensive programming
+    if (newLocation == null)
+        throw new ArgumentNullException("newLocation");
+
+    // it is better to keep & update one algorithm
+    Move(newLocation.X, newLocation.Y);
+}
+
+- implement exceptions!
+try{} - catch{Exception e} - finally{}
+
+LINQ: Language Integrated Query
+
+// will throw an error!
+var number = int.Parse("abc");
+
+var result = int.TryParse("abc", out number);
+if (result)
+    Console.WriteLine(number);
+else
+    Console.WriteLine("Conversion failed...")
+
+- downside is to define the number separetely
+- or use Parse in try{} - catch {}
+
+#
+
+Access Modifiers
+
+- Public
+- Private
+- Protected
+- Internal
+- Protected Internal
+
+What?
+- A way to control access to a class and/or its members
+Why?
+- To create safety in our programs
+How?
+
+public class Customer
+{
+    private string Name;
+}
+
+var john = new Customer();
+john.Name; //will not compile!
+
+Object-oriented programming
+- Encapsulation / Information Hiding
+- Inheritance
+- Polymorphism
+
+Encapsulation (in practice)
+- Define fields as private
+- Provide getter/setter methods as public
+
+public class Person
+{
+    private string _name;
+
+    public void SetName(string name)
+    {
+        if (!String.IsNullOrEmpty(name))
+            this._name = name;
+    }
+
+    public string GetName()
+    {
+        return _name;
+    }
+}
+
+public class Person
+{
+    private DateTime _birthDate;
+
+    public void SetBirthDate(DateTime birthDate)
+    {
+        _birthDate = birthDate;
+    }
+
+    public DateTime GetBirthDate()
+    {
+        return _birthDate;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var person = new Person();
+        person.SetBirthDate(new DateTime(1995, 10, 23));
+        Console.WriteLine(person.GetBirthDate());
+    }
+}
+
+- from oop perspective
+- follow the principle of Encapsulation
+- objects should hide their implementation detail
+- reveal what they can do as opposed to how they do
+
+#
+
+Interfaces
+
+Agenda
+- What is an Interface?
+- How to declare and implement Interfaces
+- Interfaces and testability
+- Interfaces and extensibility
+
+What?
+- A language construct that is similar to a class (in terms of syntax)
+- but is fundamentally different
+
+public interface ITaxCalculator
+{
+    int Calculate();
+}
+
+Why?
+- To build loosely-coupled applications
+- vs tightly coupled / dependend
+
+OrderProcessor -> TaxCalculator
+OrderProcessor -> ITaxCalculator <interface>
+
+#
+
+Generics
+
+public class List
+{
+    public void Add(int number)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int this[int index]
+    {
+        get { throw new NotImplementedException(); }
+    }
+}
+
+public class GenericList<T>
+{
+    public void Add(T value)
+    {
+
+    }
+
+    public T this[int index]
+    {
+        get { throw new NotImplementedException(); }
+    }
+}
+
+public class GenericDictionary<TKey, TValue>
+{
+    public void Add(TKey key, TValue value) {}
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var numbers = new GenericList<int>();
+        numbers.Add(1);
+
+        var books = new GenericList<Book>();
+        books.Add(new Book(Title = "Pet Semetary"));
+
+        var dictionary = new GenericDictionary<string, Book>();
+        dictionary.Add("1234", new Book());
+    }
+}
+
+- one can find all generic collections under:
+- System.Collections.Generic
+
+// non generic class
+public class Utilities where : new()
+{
+    public int Max(int a, int b)
+    {
+        return a > b ? a : b;
+    }
+
+    // added later with : new()
+    public void DoSomething(T value)
+    {
+        // now it works since it now has to have new() default constructor
+        var obj = new T();
+    }
+
+    // generic class
+    public T Max<T>(T a, T b) where T : IComparable
+    {
+        // check a.CompareTo()
+        // return a > b ? a : b;
+
+        return a.CompareTo(b) > 0 ? a : b;
+    }
+}
+
+- where T : IComparable -> interface
+- where T : Product     -> class
+- where T : struct      -> type
+- where T : class       -> ref type
+- where T : new()       -> default constructor
+
+public class DiscountCalculator<TProduct> where TProduct : Product
+{
+    public float CalculateDiscount(TProduct product)
+    {
+        // has access to property of the class
+        return product.Price;
+    }
+}
+
+public class Nullable<T> where T : struct
+{
+    private object _value;
+
+    public Nullable() {}
+
+    public Nullable(T value)
+    {
+        _value = value;
+    }
+
+    public bool HasValue
+    {
+        get { return _value != null; }
+    }
+
+    public T GetValueOrDefault()
+    {
+        if (HasValue)
+            return (T)_value;
+
+        return default(T);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var number = new Nullable<int>(5);
+        Console.WriteLine("Has value ? " + number.HasValue);
+        Console.WriteLine("Value: " + number.GetValueOrDefault());
+    }
+}
+
+System.Nullable -> structure in .NET Library
+
+#
+
+Events and Delegates
+
+Events
+- a mechanism for communication between objects
+- used in building loosely coupled applications
+- helps extending applications
+
+public class VideoEncoder
+{
+    public void Encode(Video video)
+    {
+        //Encoding logic
+        // ...
+
+        _mailService.Send(new Mail());
+        _messageService.Send(new Text());
+    }
+}
+
+VideoEncoder: publisher & event sender -> VideoEncoded
+MailService: subscriber & event receiver <- VideoEncoded
+*MessageService: extend the application by adding a new class +!
+
+public class VideoEncoder
+{
+    public Void Encode(Video video)
+    {
+        // Encoding logic
+        // ...
+
+        OnVideoEncoded();
+    }
+}
+
+Invoke: Notify subscribers & Send message to the listeners
+= invoking a method in the subscriber
+
+this is Event Handler:
+public void OnVideoEncoded(object source, EventArgs e)
+{
+}
+
+Delegates
+- Agreement / Contract between Publisher and Subscriber
+- Determines the signature of the event handler method in Subscriber
+
+Program.cs
+namespace EventsAndDelegates
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var video = new Video() { Title = "Video 1" };
+            var videoEncoder = new VideoEncoder(); 		//publisher
+            var mailService = new MailService(); 		//subscriber
+            var messageService = new MessageService(); 	//subscriber
+
+            // register a handler for that event
+            // reference to a pointer to that event
+            // list of pointers
+
+            videoEncoder.VideoEncoded += mailService.OnVideEncoded;
+            videoEncoder.VideoEncoded += messageService.OnVideoEncoded;
+
+            videoEncoder.Encode(video);
+        }
+    }
+}
+
+VideoEncoder.cs
+using System;
+using System.Threading;
+namespace EventsAndDelegates
+{
+    public VideoEventArgs : EventArgs
+    {
+        public Video Video { get; set; }
+    }
+
+    public class VideoEncoder
+    {
+        // 1- Define a delegate
+        // 2- Define an event based on that delegate
+        // 3- Raise the event
+
+        // public delegate void VideoEncodedEventHandler(object source, VideoEventArgs args);
+        // public event VideoEncodedEventHandler VideoEncoded;
+
+        public event EventHandler VideoEncoding;
+        public event EventHandler<VideoEventArgs> VideoEncoded;
+
+        public void Encode(Video video)
+        {
+            Console.WriteLine("Encoding Video...");
+            Thread.Sleep(3000);
+
+            OnVideoEncoded(video);
+        }
+
+        protected virtual void OnVideoEncoded(Video video)
+        {
+            if (VideoEncoded != null)
+            {
+                VideoEncoded(this, new VideoEventArgs(){ Video = video });
+            }
+        }
+    }
+}
+
+MailService.cs
+public class MailService
+{
+    public void OnVideEncoded(object source, VideoEventArgs e)
+    {
+        Console.WriteLine("MailService: Sending an email..." + e.Video.Title);
+    }
+}
+
+MessageService.cs
+public class MessageService
+{
+    public void OnVideoEncoded(object source, VideoEventArgs args)
+    {
+        Console.WriteLine("MessageService: Sending a text message..." + args.Video.Title);
+    }
+}
+
+#
+
+Running & Debugging
+
+CTRL + R + R        ---> Rename Class
+
+CTLR + ALT + J      ---> Object Browser
+
+CTRL + SHIFT + B    ---> building
+F5                  ---> run in debug
+CTRL + F5           ---> run without debug
+F9                  ---> add breakpoint
+CTRL + SHIFT + F9   ---> remove all breakpoints
+F10                 ---> Step over / one line at a time
+F11                 ---> Step into / example the method
+SHIFT + F11         ---> Step out of a method
+
+// one can press F5 to run the application after breakpoint
+
+Debug -> Windows -> Watch -> Watch 1
+
+Debug -> Windows -> Call Stack
+
+Debug -> Windows -> Autos
+Debug -> Windows -> Locals
+
+#
+
+Visual Studio Tips & Tricks
+
+- Bookmarks:        CTRL + K + K // do not forget to rename
+- Show Bookmarks:   CTRL + W + B // windows -> bookmark
+
+Code Snippets
+
+- Constructor:      ctor + TAB
+- Property:         prop + TAB
+- Property full:    propfull + TAB
+- ConsoleWriteLine: cw + TAB
+- Equals:           equals + TAB
+- Try Catch:        try + TAB
+- Try Finally:      tryf + TAB
+- For Loop:         for + TAB
+- For Loop -:       forr + TAB
+- Foreach:          foreach + TAB
+- While Loop:       while + TAB
+- Do Loop:          do + TAB
+
+Format Code
+
+// format the entire selection
+- CTRL + A      ->      CTRL + K + CTRL + F
+
+// configure format on save
+// CTRL + S
+// productivity power tools
+// PowerCommands General -> Format document on save
+                         -> Remove and Sort using on save
+
+Manage Tabs with Keyboard
+
+- Cycle through open windows: CTRL + TAB
+- Go Next tab:                CTRL + F6
+- Go Previous Tab:            CTRL + SHIFT + F6
+- Close the current Tab:      CTRL + F4
+
+- Close all open Tabs:        ALT + W + L
+- Open & Navigate File:       CTRL + ,
+
+- Full screen view of Tab:    SHIFT + ALT + ENTER
+
+- Collapse method:            CTRL + M + M
+
+- Alternate between options:  ALT + ENTER
+
+#
+
+Unit Testing C# Code
+
+Automated Testing
+
+What?
+- The practice of writing code to test our code,
+- and then run those tests in an automated fashion
+
+Code <- Production Code + Test Code
+
+- Automated tests are repeatable
+
+Benefits of Automated Testing
+- Test your code frequently, in less time
+- Catch bugs before deploying
+- Deploy with confidence
+- Refactor with confidence
+- Focus more on the quality
+
+Types of Test
+
+- Unit Test
+- Tests a unit of an application
+- without its external dependencies
+
+- cheap to write, execute fast
+- do not give a lot of confidence
+
+Integration Test
+- Tests the application
+- with its external dependencies
+
+- take longer to execute
+- give more confidence
+
+End-to-End Test
+- Drives an application through its UI
+
+- give you the greatest confidence
+- very slow
+- very brittle
+
+Test Pyramid
+
+                        E2E E2E
+
+          Integration Integration Integration
+
+Unit     Unit     Unit    Unit    Unit    Unit     Unit
+
+- the actual ratio between unit, integration and end-to-end tests
+- depends on your project
+
+Takeaways
+- Favour unit tests to e2e tests
+- Cover unit test gaps with integration tests
+- Use end-to-end tests sparingly
+
+The Tooling
+
+Testing Frameworks
+
+- NUnit
+- MSTest
+- xUnit
+
+Library + Test Runner
+
+- focus on the fundamentals, not the tooling
+
+MSTest  <- build in Visual Studio
+NUnit   <- better option
+
+Source Code
+
+TestNinja
+
+Reservation.cs
+namespace UnitTesting.Fundamentals
+{
+    public class Reservation
+    {
+        public User MadeBy { get; set; }
+
+        public bool CanBeCancelledBy(User user)
+        {
+            if (user.IsAdmin)
+                return true;
+
+            if (MadeBy == user)
+                return true;
+
+            return false;
+            // has three execution paths
+        }
+    }
+
+    public class User
+    {
+        public bool IsAdmin { get; set; }
+    }
+}
+
+TestNinja.UnitTests
+
+-> Add Unit Test Project
+---> under Visual C# / Test
+
+ReservationTests.cs
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+// Add reference 'TestNinja' to 'TestNinja.UnitTests'
+using UnitTesting.Fundamentals;
+
+namespace TestNinja.UnitTests
+{
+    [TestClass]
+    public class ReservationTests
+    {
+        [TestMethod]
+        public void CanBeCancelledBy_UserIsAdmin_ReturnsTrue()
+        {
+            // Arrange
+            var reservation = new Reservation();
+
+            // Act
+            var result = reservation.CanBeCancelledBy(new User{ IsAdmin = true });
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CanBeCancelledBy_MadeBySameUser_ReturnsTrue()
+        {
+            // Arrange
+            var user = new User();
+            var reservation = new Reservation( MadeBy = user );
+
+            // Act
+            var result = reservation.CanBeCancelledBy(user);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void CanBeCancelledBy_NotMadeBySameAndNotAdmin_ReturnsTrue()
+        {
+            // Arrange
+            var reservation = new Reservation( MadeBy = new User() );
+
+            // Act
+            var result = reservation.CanBeCancelledBy(new User());
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+    }
+}
+
+Test -> Run -> All Tests        ---> CTRL + R + A
+- this should open Test Explorer windows
+
+- in MSTest, one can only run all the tests in project
+- huge downside in flexibility
+
+- now refactoring is easy and possible
+
+public bool CanBeCancelledBy(User user)
+{
+    if (user.IsAdmin || MadeBy == user)
+        return true;
+
+    return false;
+    // has three execution paths
+}
+
+- even more refactoring!
+
+public bool CanBeCancelledBy(User user)
+{
+    return (user.IsAdmin || MadeBy == user);
+}
+
+- all the tests are passing
+
+NUnit
+- Install-Package NUnit -Version X.X
+- Install-Package NUnit3TestAdapter -Version X.X.X
+
+- has different attributes
+
+ReservationTests.cs
+using System;
+
+// remove UnitTesting line to choose the Assert class in NUnit
+// using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+// Add reference 'TestNinja' to 'TestNinja.UnitTests'
+using UnitTesting.Fundamentals;
+
+// Add reference to NUnit
+using NUnit.Framework;
+
+namespace TestNinja.UnitTests
+{
+    [TestFixture]
+    public class ReservationTests
+    {
+        [Test]
+        public void CanBeCancelledBy_UserIsAdmin_ReturnsTrue()
+        {
+            // Arrange
+            var reservation = new Reservation();
+
+            // Act
+            var result = reservation.CanBeCancelledBy(new User{ IsAdmin = true });
+
+            // Assert
+            Assert.IsTrue(result);
+            Assert.That(result, Is.True);   <- preferred
+            Assert.That(result == true);
+            // they all same
+        }
+
+        [Test]
+        public void CanBeCancelledBy_MadeBySameUser_ReturnsTrue()
+        {
+            // Arrange
+            var user = new User();
+            var reservation = new Reservation( MadeBy = user );
+
+            // Act
+            var result = reservation.CanBeCancelledBy(user);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void CanBeCancelledBy_NotMadeBySameAndNotAdmin_ReturnsTrue()
+        {
+            // Arrange
+            var reservation = new Reservation( MadeBy = new User() );
+
+            // Act
+            var result = reservation.CanBeCancelledBy(new User());
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+    }
+}
+
+Test-driven Development (TDD)
+
+- With TDD you write your tests
+- before writing the production code
+
+-> Write a failing test
+--> Write the simplest code that make the test pass
+---> Refactor if necessary
+
+- repeat until one has the complete feature
+
+- source code will be testable from the start
+- every line of the production code will be fully integrated with tests
+- simpler implementation
+
+Test first v/s Code first
+- in theory TDD is more promising
+- in practice, it can get really complex
