@@ -1300,3 +1300,28 @@ Test-driven Development (TDD)
 Test first v/s Code first
 - in theory TDD is more promising
 - in practice, it can get really complex
+
+#
+
+What is MVVM (Model-View-ViewModel) Pattern?
+
+MVVM Architectural Pattern
+
+Model --- View --- ViewModel
+
+Model:          Business objects, data, classes
+View:           Page, UI
+ViewModel:      Model designed for a view
+
+- Is not code-behind the view model?
+- no
+Code-behind ---> tightly coupled ---> Xamarin
+
+ViewModel: Plain old CLR objcect : POCO : Unit Testable!
+
+- Use MVVM if you want to unit test your application
+- Users want applications that work, no one Characters
+
+- Use MVVM in large, complex apps
+- do not use MVVM from the get go,
+- it will increase the complexity without gaining anything
